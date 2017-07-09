@@ -6,7 +6,13 @@
    <string>com.alexplescan.sabnzbd-limiter</string>
    <key>Program</key>
    <string>/path/to/executable/set-limit.sh</string>
+   <key>WorkingDirectory</key>
+   <string>/path/to/foler/sabnzbd-limiter</string>
    <key>RunAtLoad</key>
    <true/>
+   <key>StandardOutPath</key>
+   <string>/path/to/folder/logs/out.log</string>
+   <key>StandardErrorPath</key>
+   <string>/path/to/folder/err.log</string>
 </dict>
 </plist>
