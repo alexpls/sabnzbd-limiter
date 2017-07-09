@@ -7,4 +7,10 @@ This uses ARP to check whether the device is on the local network, which is a si
 ## Usage
 
 1. Run `$ cp .env.example .env` and fill in/change the variables as required
-2. Run `$ bash set-limit.sh`
+1. Run `$ bash set-limit.sh`
+
+## Mac OS - starting the daemon on system login
+
+1. Edit the `com.alexplescan.sabnzbd-limiter.plist.example` file to include the correct path to the executable file on your machine
+1. `$ cp com.alexplescan.sabnzbd-limiter.plist.example ~/Library/LaunchAgents/com.alexplescan.sabnzbd-limiter.plist`
+1. `launchctl load com.alexplescan.sabnzbd-limiter.plist`
