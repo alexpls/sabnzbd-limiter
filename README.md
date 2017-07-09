@@ -14,3 +14,5 @@ This uses ARP to check whether the device is on the local network, which is a si
 1. Edit the `com.alexplescan.sabnzbd-limiter.plist.example` file to include the correct path to the executable file on your machine
 1. `$ cp com.alexplescan.sabnzbd-limiter.plist.example ~/Library/LaunchAgents/com.alexplescan.sabnzbd-limiter.plist`
 1. `launchctl load com.alexplescan.sabnzbd-limiter.plist`
+
+For reference, see: https://developer.apple.com/library/content/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html#//apple_ref/doc/uid/10000172i-SW7-BCIEDDBJ
