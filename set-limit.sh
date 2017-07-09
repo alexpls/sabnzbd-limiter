@@ -16,7 +16,7 @@ function pingIpAddress {
 
 function pingScan {
   for i in {1..254}; do
-    ping -c 1 -W 1 "192.168.1.$i";
+    ping -c 1 -W 1 "192.168.1.$i" > /dev/null;
   done
 }
 
@@ -36,30 +36,44 @@ function loadEnv {
   done
 }
 
-function main {
+function limitSpeedIfDeviceIsOnNetwork {
   lastKnownIp=""
+  skipPingScan=$1
 
-  while true; do
-    if [[ ! -z $lastKnownIp ]]; then
-      echo -n "Pinging $lastKnownIp to try to refresh the ARP table..."
-      pingIpAddress $lastKnownIp
+  if [[ ! -z $lastKnownIp ]]; then
+    echo -n "Pinging $lastKnownIp to try to refresh the ARP table..."
+    pingIpAddress $lastKnownIp
+    echo " done!"
+  fi
+
+  echo -n "Trying to find device '$PHONE_MAC_ADDRESS' on the network..."
+  lastKnownIp=$(ipAddressOfDeviceOnNetwork $PHONE_MAC_ADDRESS)
+
+  if [[ -z $lastKnownIp ]]; then
+    echo " didn't find it"
+
+    if [[ -z $skipPingScan ]]; then
+      echo -n "Doing a ping scan to refresh the ARP table..."
+      pingScan
       echo " done!"
-    fi
-
-    echo -n "Trying to find device '$PHONE_MAC_ADDRESS' on the network..."
-    lastKnownIp=$(ipAddressOfDeviceOnNetwork $PHONE_MAC_ADDRESS)
-
-    if [[ -z $lastKnownIp ]]; then
-      echo " didn't find it"
+      limitSpeedIfDeviceIsOnNetwork true
+      return 0
+    else
       echo -n "Removing SABNZBD speed limit..."
       limitSpeed $UNLIMITED_SPEED
       echo " done!"
-    else
-      echo " found it, its IP is $lastKnownIp"
-      echo -n "Setting SABNZBD speed limit to $LIMITED_SPEED..."
-      limitSpeed $LIMITED_SPEED
-      echo " done!"
     fi
+  else
+    echo " found it, its IP is $lastKnownIp"
+    echo -n "Setting SABNZBD speed limit to $LIMITED_SPEED..."
+    limitSpeed $LIMITED_SPEED
+    echo " done!"
+  fi
+}
+
+function main {
+  while true; do
+    limitSpeedIfDeviceIsOnNetwork
 
     echo "Sleeping for $POLL_TIMEOUT seconds"
     sleep $POLL_TIMEOUT
